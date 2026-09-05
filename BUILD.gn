@@ -18,6 +18,7 @@ import("//build/toolchain/blueos.gni")
 group("check_apps") {
   deps = [
     "//apps/example/blinky:blinky_example",
+    "//apps/example/dynamic/multi_dso:multi",
     "//apps/example/fs:fs_example",
     "//apps/example/ftp_client:ftp_client_example_test_runner",
     "//apps/example/net:net_example",
