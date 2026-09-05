@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import("//build/templates/dynamic_app.gni")
+import("//build/boards/${board}.gni")
 import("//build/toolchain/blueos.gni")
 
 # C29 fixture: the minimal Thumb PIE dynamic application. It links
@@ -35,11 +36,14 @@ dynamic_app("hello") {
   rustflags = [
     "-Clinker=clang",
     "-Clink-arg=-fuse-ld=lld",
-    "-Clink-arg=--target=thumbv7m-none-eabi",
+    "-Clink-arg=--target=${dynamic_link_target}",
     "-Clink-arg=-L${_lib_dir}",
     "-Clink-arg=-l:liblibrs.so",
     # scrt1 resolves `main` through its GOT slot; export the symbol so LLD
     # emits the R_ARM_GLOB_DAT that the kernel loader fills at load time.
     "-Clink-arg=-Wl,--export-dynamic-symbol=main",
   ]
+  foreach(_option, dynamic_link_options) {
+    rustflags += [ "-Clink-arg=${_option}" ]
+  }
 }
