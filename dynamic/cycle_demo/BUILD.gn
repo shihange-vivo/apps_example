@@ -38,7 +38,7 @@ blueos_dso("cycle_a_bootstrap") {
 
 blueos_app_package("cycle_demo") {
   package_id = "cycle_demo"
-  profile = "thumbv7m-vivo-blueos-newlibeabi"
+  profile = dynamic_profile_id
   system_sonames = [ "libc.so.1" ]
   root_path = "/apps/cycle_demo/app.elf"
   root_sources = [ "app/main.rs" ]

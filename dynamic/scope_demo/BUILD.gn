@@ -34,7 +34,7 @@ import("//build/templates/blueos_dso.gni")
 
 blueos_app_package("scope_demo") {
   package_id = "scope_demo"
-  profile = "thumbv7m-vivo-blueos-newlibeabi"
+  profile = dynamic_profile_id
   system_sonames = [
     "libc.so.1",
     "libscope_sys.so.1",

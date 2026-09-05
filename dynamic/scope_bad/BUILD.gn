@@ -22,7 +22,7 @@ import("//build/templates/blueos_app_package.gni")
 
 blueos_app_package("scope_bad") {
   package_id = "scope_bad"
-  profile = "thumbv7m-vivo-blueos-newlibeabi"
+  profile = dynamic_profile_id
   system_sonames = [ "libc.so.1" ]
   root_path = "/apps/scope_bad/app.elf"
   root_sources = [ "app/main.rs" ]

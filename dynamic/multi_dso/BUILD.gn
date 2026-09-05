@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import("//build/boards/${board}.gni")
 import("//build/templates/blueos_app_package.gni")
 import("//build/templates/build_template.gni")
 
@@ -28,7 +29,7 @@ import("//build/templates/build_template.gni")
 # in a later commit.
 blueos_app_package("multi") {
   package_id = "multi"
-  profile = "thumbv7m-vivo-blueos-newlibeabi"
+  profile = dynamic_profile_id
   system_sonames = [ "libc.so.1" ]
   root_path = "/apps/multi/app.elf"
   root_sources = [ "app/main.rs" ]

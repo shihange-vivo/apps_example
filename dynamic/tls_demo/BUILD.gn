@@ -24,7 +24,7 @@ import("//build/templates/blueos_app_package.gni")
 
 blueos_app_package("tls_demo") {
   package_id = "tls_demo"
-  profile = "thumbv7m-vivo-blueos-newlibeabi"
+  profile = dynamic_profile_id
   system_sonames = [ "libc.so.1" ]
   root_path = "/apps/tls_demo/app.elf"
   root_sources = [ "app/main.rs" ]
