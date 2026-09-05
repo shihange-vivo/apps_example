@@ -39,6 +39,7 @@ blueos_app_package("tls_demo") {
       vfs_path = "/apps/tls_demo/lib/libfoo.so.1"
       sources = [ "libfoo/lib.rs" ]
       depends = []
+      rustflags = [ "-Clink-arg=--pic-veneer" ]
     },
     {
       name = "libbar"
@@ -46,6 +47,7 @@ blueos_app_package("tls_demo") {
       vfs_path = "/apps/tls_demo/lib/libbar.so.1"
       sources = [ "libbar/lib.rs" ]
       depends = []
+      rustflags = [ "-Clink-arg=--pic-veneer" ]
     },
   ]
 }
