@@ -43,6 +43,7 @@ extern "C" {
     fn protected_report() -> i32;
     fn weakdata_read() -> u32;
     fn sys_report() -> i32;
+    fn sys_ctor_count() -> u32;
 }
 
 /// The root's interposing strong definition (application scope, first).
@@ -72,6 +73,7 @@ pub extern "C" fn main(
     let protected_owner = unsafe { protected_report() };
     let self_binding = unsafe { core::ptr::read_volatile(&self_value) };
     let sys = unsafe { sys_report() };
+    let sys_ctor = unsafe { sys_ctor_count() };
     let sys_local = unsafe { core::ptr::read_volatile(&sys_target) };
     let weakdata = unsafe { weakdata_read() };
 
@@ -83,11 +85,12 @@ pub extern "C" fn main(
         && self_binding == 444
         && sys == 777
         && sys_local == 42
+        && sys_ctor == 1
         && weakdata == 0;
 
     unsafe {
         printf(
-            b"scope: value=%d fn=%d hidden=%d hidden_report=%d protected=%d self=%d sys=%d sys_target=%d weakdata=%d\n\0"
+            b"scope: value=%d fn=%d hidden=%d hidden_report=%d protected=%d self=%d sys=%d sys_target=%d sys_ctor=%d weakdata=%d\n\0"
                 .as_ptr() as *const c_char,
             value,
             fn_value,
@@ -97,6 +100,7 @@ pub extern "C" fn main(
             self_binding,
             sys,
             sys_local,
+            sys_ctor as c_int,
             weakdata as c_int,
         );
     }
