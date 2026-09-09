@@ -30,6 +30,10 @@
 
 use core::sync::atomic::{AtomicU32, Ordering};
 
+extern "C" {
+    fn strlen(value: *const core::ffi::c_char) -> usize;
+}
+
 static SYS_CTOR_COUNT: AtomicU32 = AtomicU32::new(0);
 static SYS_FINI_COUNT: AtomicU32 = AtomicU32::new(0);
 
@@ -62,6 +66,15 @@ pub static sys_target: i32 = 777;
 #[no_mangle]
 pub extern "C" fn sys_report() -> i32 {
     unsafe { core::ptr::read_volatile(&sys_target) }
+}
+
+/// Retained, but not called by the scope root: its `strlen` reference gives
+/// this system DSO a real outgoing dependency on `libc.so.1`, allowing the
+/// registry test to verify cross-SCC backing leases without adding a libc call
+/// to constructor/destructor execution.
+#[no_mangle]
+pub extern "C" fn sys_libc_dependency_probe(value: *const core::ffi::c_char) -> usize {
+    unsafe { strlen(value) }
 }
 
 #[panic_handler]
