@@ -18,6 +18,7 @@ import("//build/toolchain/blueos.gni")
 group("check_apps") {
   deps = [
     "//apps/example/blinky:blinky_example",
+    "//apps/example/dynamic/clang_cxx:clang_cxx",
     "//apps/example/dynamic/cycle_demo:cycle_demo",
     "//apps/example/dynamic/multi_dso:multi",
     "//apps/example/dynamic/scope_bad:scope_bad",
