@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import("//build/boards/${board}.gni")
-import("//build/templates/blueos_app_package.gni")
+import("//build/templates/blueos_app_bundle.gni")
 import("//build/templates/blueos_dso.gni")
 
 # The GN build graph must stay acyclic, but the ELF closure may not: this
@@ -31,15 +31,13 @@ blueos_dso("cycle_a_bootstrap") {
   ]
 }
 
-# C31-b/C31-d private-cycle corpus (§7.5, §17.1): the package closure
+# C31-b/C31-d private-cycle corpus (§7.5, §17.1): the runtime closure
 # contains a real private cycle — libcycle_a and libcycle_b each declare the
 # other — so the loader must freeze one SCC with a stable discovery order,
 # initialize it dependency-first, and run the fini in the exact reverse.
 
-blueos_app_package("cycle_demo") {
-  package_id = "cycle_demo"
-  profile = dynamic_profile_id
-  system_sonames = [ "libc.so.1" ]
+blueos_app_bundle("cycle_demo") {
+  target_profile = dynamic_profile_id
   root_path = "/apps/cycle_demo/app.elf"
   root_sources = [ "app/main.rs" ]
   root_depends = [
@@ -69,6 +67,7 @@ blueos_app_package("cycle_demo") {
       soname = "libcycle_b.so.1"
       vfs_path = "/apps/cycle_demo/lib/libcycle_b.so.1"
       sources = [ "libcycle_b/lib.rs" ]
+
       # The back edge links against the bootstrap stub (same SONAME): GN
       # stays acyclic while the DT_NEEDED cycle closes at the ELF level.
       depends = [

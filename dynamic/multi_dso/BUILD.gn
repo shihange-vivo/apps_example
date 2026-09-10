@@ -13,24 +13,18 @@
 # limitations under the License.
 
 import("//build/boards/${board}.gni")
-import("//build/templates/blueos_app_package.gni")
+import("//build/templates/blueos_app_bundle.gni")
 import("//build/templates/build_template.gni")
 
-# Phase 2 C30 fixture: a manifest-closed dynamic application package with a
-# private dependency closure (§17.1):
+# Dynamic application bundle with a private dependency closure:
 #
 #   app ──┬── foo ──┬── common ── libc.so.1
 #         │         └── libc.so.1
 #         ├── bar ─── common
 #         └── libc.so.1
 #
-# The build generates the manifest from the final ELFs and validates it
-# bidirectionally (C30-a §6.2). The kernel consumes the manifest and layout
-# in a later commit.
-blueos_app_package("multi") {
-  package_id = "multi"
-  profile = dynamic_profile_id
-  system_sonames = [ "libc.so.1" ]
+blueos_app_bundle("multi") {
+  target_profile = dynamic_profile_id
   root_path = "/apps/multi/app.elf"
   root_sources = [ "app/main.rs" ]
   root_depends = [

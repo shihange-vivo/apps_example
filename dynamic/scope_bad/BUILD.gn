@@ -13,23 +13,22 @@
 # limitations under the License.
 
 import("//build/boards/${board}.gni")
-import("//build/templates/blueos_app_package.gni")
+import("//build/templates/blueos_app_bundle.gni")
 
 # C31-a negative corpus (§17.2): the root calls an undefined weak *function*.
 # LLD accepts the artifact (the reference stays weak), but the runtime
 # relocation policy must fail closed and reject the link — an undefined weak
 # control-flow target never binds to zero.
 
-blueos_app_package("scope_bad") {
-  package_id = "scope_bad"
-  profile = dynamic_profile_id
-  system_sonames = [ "libc.so.1" ]
+blueos_app_bundle("scope_bad") {
+  target_profile = dynamic_profile_id
   root_path = "/apps/scope_bad/app.elf"
   root_sources = [ "app/main.rs" ]
   root_depends = [ "libweakcall" ]
+
   # The weak-call DSO deliberately carries an unresolved weak function; let
   # the executable link accept the shared object's undefineds (the runtime
-  # relocation policy is what rejects the package).
+  # relocation policy is what rejects the application).
   root_rustflags = [ "-Clink-arg=-Wl,--allow-shlib-undefined" ]
   private_dsos = [
     {

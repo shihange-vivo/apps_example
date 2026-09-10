@@ -13,10 +13,10 @@
 # limitations under the License.
 
 import("//build/boards/${board}.gni")
-import("//build/templates/blueos_app_package.gni")
+import("//build/templates/blueos_app_bundle.gni")
 import("//build/templates/blueos_dso.gni")
 
-# C31-a symbol corpus (§17.2): a manifest-closed package whose private DSOs
+# C31-a symbol corpus (§17.2): an app bundle whose private DSOs
 # deliberately carry the strong/weak/hidden/protected visibility matrix and
 # an app that interposes private defaults, plus a second system DSO that must
 # not be interposed by the application scope.
@@ -32,13 +32,8 @@ import("//build/templates/blueos_dso.gni")
 # The discovery order is weak before strong, so the frozen application scope
 # must skip the earlier weak definition and bind the later strong one.
 
-blueos_app_package("scope_demo") {
-  package_id = "scope_demo"
-  profile = dynamic_profile_id
-  system_sonames = [
-    "libc.so.1",
-    "libscope_sys.so.1",
-  ]
+blueos_app_bundle("scope_demo") {
+  target_profile = dynamic_profile_id
   root_path = "/apps/scope_demo/app.elf"
   root_sources = [ "app/main.rs" ]
   root_depends = [
@@ -55,6 +50,7 @@ blueos_app_package("scope_demo") {
       vfs_path = "/apps/scope_demo/lib/libweak.so.1"
       sources = [ "libweak/lib.rs" ]
       depends = []
+
       # SysV hash only: one corpus artifact must exercise DT_HASH.
       rustflags = [ "-Clink-arg=--hash-style=sysv" ]
     },
@@ -88,14 +84,15 @@ blueos_app_package("scope_demo") {
     },
   ]
   extra_root_deps = [ ":scope_sys" ]
+
   # The root imports `sys_report` from the second system DSO.
   root_rustflags = [ "-Clink-arg=-l:libscope_sys.so" ]
 }
 
 # The second system DSO (§17.2 non-interpose): not a package-private image —
 # it is seeded at /system/lib, declared in the kernel's system catalog and
-# listed in the package's `system_sonames`. The app defines a same-named
-# `sys_target`; the fresh system load must still bind its own definition.
+# found through the system catalog. The app defines a same-named `sys_target`;
+# the fresh system load must still bind its own definition.
 blueos_dso("scope_sys") {
   crate_name = "scope_sys"
   soname = "libscope_sys.so.1"

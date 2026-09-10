@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import("//build/boards/${board}.gni")
-import("//build/templates/blueos_app_package.gni")
+import("//build/templates/blueos_app_bundle.gni")
 
 # C31-d emutls corpus (§8.7): two private DSOs each define a same-named
 # `thread_local` counter — every `__emutls_get_address` reference must resolve
@@ -22,10 +22,8 @@ import("//build/templates/blueos_app_package.gni")
 # per-thread values. The root repeats the create/join cycle to exercise
 # per-thread destructor paths.
 
-blueos_app_package("tls_demo") {
-  package_id = "tls_demo"
-  profile = dynamic_profile_id
-  system_sonames = [ "libc.so.1" ]
+blueos_app_bundle("tls_demo") {
+  target_profile = dynamic_profile_id
   root_path = "/apps/tls_demo/app.elf"
   root_sources = [ "app/main.rs" ]
   root_depends = [
