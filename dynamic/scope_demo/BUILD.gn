@@ -95,7 +95,11 @@ blueos_app_bundle("scope_demo") {
 # the fresh system load must still bind its own definition.
 blueos_dso("scope_sys") {
   crate_name = "scope_sys"
-  soname = "libscope_sys.so.1"
+
+  # Exercise the path-keyed system registry: without DT_SONAME the root's
+  # DT_NEEDED is the build filename (`libscope_sys.so`), while the catalog
+  # maps that lookup name to `/system/lib/libscope_sys.so.1`.
+  omit_soname = true
   sources = [ "sys/lib.rs" ]
   deps = [ "//librs:libc" ]
   _lib_dir = rebase_path("${root_out_dir}/lib")
